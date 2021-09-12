@@ -7,7 +7,7 @@ class SearchResultProvider with ChangeNotifier {
   String _displayText = "";
   String _searchResultJsonResonse = "";
   bool _isFetchingSearchResults = false;
-
+  bool showResultContainer = false;
   bool get isFetching => _isFetchingSearchResults;
 
   Future<void> fetchData(String searchUrl) async {
@@ -24,6 +24,14 @@ class SearchResultProvider with ChangeNotifier {
   }
 
   String get getResponseText => _searchResultJsonResonse;
+  bool get shouldShowResultContainer {
+    return showResultContainer;
+  }
+
+  void changeShowResultContainer(bool choice) {
+    choice ? showResultContainer = true : showResultContainer = false;
+    notifyListeners();
+  }
 
   void setDisplayText(String text) {
     _displayText = text;

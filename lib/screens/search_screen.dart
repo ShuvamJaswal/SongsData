@@ -21,7 +21,10 @@ class _SearchScreenState extends State<SearchScreen> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [SearchFieldEdit(), SearchResultContainer()],
+          children: [
+            SearchFieldEdit(),
+            SearchResultContainer(),
+          ],
         ),
       ),
     );
@@ -30,7 +33,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
 class SearchFieldEdit extends StatelessWidget {
   final searchFieldInputController = TextEditingController();
-
+  final String domainUrl = 'https://genius.com/api/';
   @override
   Widget build(BuildContext context) {
     final searchResult = Provider.of<SearchResultProvider>(context);
@@ -38,10 +41,20 @@ class SearchFieldEdit extends StatelessWidget {
       children: [
         Expanded(
           child: TextField(
-            onChanged: (String fieldText) => searchResult.fetchData(
-                'https://genius.com/api/search/song?q=${fieldText.trim()}'),
-            onSubmitted: (String fieldText) => searchResult.fetchData(
-                'https://genius.com/api/search/song?q=${fieldText.trim()}'),
+            onChanged: (String fieldText) => fieldText.isEmpty
+                ? searchResult.changeShowResultContainer(false)
+                : {
+                    searchResult.fetchData(
+                        '${domainUrl}search/song?q=${fieldText.trim()}'),
+                    searchResult.changeShowResultContainer(true)
+                  },
+            onSubmitted: (String fieldText) => fieldText.isEmpty
+                ? searchResult.changeShowResultContainer(false)
+                : {
+                    searchResult.fetchData(
+                        '${domainUrl}search/song?q=${fieldText.trim()}'),
+                    searchResult.changeShowResultContainer(true)
+                  },
             controller: searchFieldInputController,
             autofocus: false,
             decoration: InputDecoration(
