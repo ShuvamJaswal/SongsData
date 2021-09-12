@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:song_app/helpers/sond_data_model.dart';
 
 class SongDataProvider with ChangeNotifier {
   String _searchResultJsonResonse = "";
@@ -14,7 +15,9 @@ class SongDataProvider with ChangeNotifier {
     print(response.statusCode);
   }
 
-  String get getResponseText => _searchResultJsonResonse;
+  SongDataModel get getSongDataModel =>
+      SongDataModel.fromJson(jsonDecode(_searchResultJsonResonse));
+  // dynamic get getResponseText => _searchResultJsonResonse;
 //   List<dynamic> getResponseJson() {
 //     if (_searchResultJsonResonse.isNotEmpty) {
 //       // print(_searchResultJsonResonse);
