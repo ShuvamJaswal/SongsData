@@ -12,20 +12,9 @@ class SongDataProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       _searchResultJsonResonse = response.body;
     }
-    print(response.statusCode);
+    //print(response.statusCode);
   }
 
   SongDataModel get getSongDataModel =>
       SongDataModel.fromJson(jsonDecode(_searchResultJsonResonse));
-  // dynamic get getResponseText => _searchResultJsonResonse;
-//   List<dynamic> getResponseJson() {
-//     if (_searchResultJsonResonse.isNotEmpty) {
-//       // print(_searchResultJsonResonse);
-//       Map<String, dynamic> json = jsonDecode(_searchResultJsonResonse);
-//       print(json['response']['sections'][0]['hits']);
-//       // print(json['data']['avatar']);
-//       return json['response']['sections'][0]['hits'];
-//     }
-//     return [];
-//   }
 }

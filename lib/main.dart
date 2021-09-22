@@ -20,7 +20,17 @@ class SongDataApp extends StatelessWidget {
           create: (_) => SongDataProvider(),
         ),
       ],
-      child: MaterialApp(home: SearchScreen()),
+      child: MaterialApp(
+        home: SearchScreen(),
+        theme: ThemeData.dark().copyWith(
+          // colorScheme: Theme.of(context).colorScheme.copyWith(
+          //     primary: Colors.purpleAccent,
+          //     secondary: Colors.purpleAccent[100]),
+          appBarTheme: AppBarTheme(backgroundColor: Colors.black),
+          // colorScheme: Colors.purpleAccent,
+          scaffoldBackgroundColor: Colors.black,
+        ),
+      ),
     );
 
     // return MaterialApp(

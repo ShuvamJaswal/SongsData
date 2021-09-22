@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:song_app/helpers/sond_data_model.dart';
 import 'package:song_app/providers/song_data_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SongData extends StatefulWidget {
   final int songId;
@@ -30,8 +32,10 @@ class _SongDataState extends State<SongData> {
       });
       final songDataProvider = Provider.of<SongDataProvider>(context);
       // Provider.of<SongDataProvider>(context)
+      print("fetch data");
       await songDataProvider
           .fetchData("https://genius.com/api/songs/${widget.songId}");
+      print("fetched data");
       songData = songDataProvider.getSongDataModel;
       // songData =
       //     SongDataModel.fromJson(jsonDecode(songDataProvider.getResponseText));
@@ -40,6 +44,7 @@ class _SongDataState extends State<SongData> {
       print('title ${songData.title}');
       print('album ${songData.album}');
       print('artist ${songData.artist}');
+      print('image ${songData.imageUrl}');
       setState(() {
         _isLoading = false;
       }); //.then((_) {
@@ -59,7 +64,7 @@ class _SongDataState extends State<SongData> {
       //     _isLoading = false;
       //   });
       // });
-
+      _isInit = false;
       super.didChangeDependencies();
     }
   }
@@ -77,7 +82,7 @@ class _SongDataState extends State<SongData> {
             : Center(
                 child: Column(children: [
                 Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Card(
                         elevation: 10,
@@ -99,13 +104,6 @@ class _SongDataState extends State<SongData> {
                           ),
                         ),
                       ),
-
-                      // Text(widget.songId.toString()),
-
-                      //  SingleChildScrollView(child: Text(songData)
-                      //Text(Provider.of<SongDataProvider>(context).getResponseText)
-                      // )
-                      //,
                     ]),
                 Column(children: [
                   Padding(
@@ -115,25 +113,59 @@ class _SongDataState extends State<SongData> {
                       children: [
                         /// Title container
                         Text(
-                          songData.title,
-                          textAlign: TextAlign.center,
+                          "Title: ${songData.title}",
+                          textAlign: TextAlign.left,
                           //overflow: TextOverflow.,
-                          //maxLines: 1,
+                          maxLines: 1,
                           style: TextStyle(
-                              fontSize: 35,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).accentColor),
+                            fontSize: 35,
+                            fontWeight: FontWeight.bold,
+                            // color: Theme.of(context).accentColor
+                          ),
                         ),
                         Text(
-                          songData.artist,
-                          textAlign: TextAlign.center,
+                          "Artist: ${songData.artist}",
+                          textAlign: TextAlign.left,
                           //overflow: TextOverflow.,
                           //maxLines: 1,
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Theme.of(context).accentColor),
+                              color: Theme.of(context).colorScheme.secondary),
                         ),
+                        Text("Release Date: ${songData.releaseDate}"),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            if (songData.youTubeUrl != null)
+                              IconButton(
+                                icon: Icon(
+                                  MdiIcons.youtube,
+                                  size: 40,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () => launch(songData.youTubeUrl),
+                              ),
+                            if (songData.spotifyUrl != null)
+                              IconButton(
+                                icon: Icon(
+                                  MdiIcons.spotify,
+                                  size: 40,
+                                  color: Colors.green,
+                                ),
+                                onPressed: () => launch(songData.spotifyUrl),
+                              ),
+                            if (songData.soundCloudUrl != null)
+                              IconButton(
+                                icon: Icon(
+                                  MdiIcons.soundcloud,
+                                  size: 40,
+                                  color: Colors.orange,
+                                ),
+                                onPressed: () => launch(songData.soundCloudUrl),
+                              ),
+                          ],
+                        )
                       ],
                     ),
                   )

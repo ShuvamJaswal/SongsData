@@ -42,18 +42,18 @@ class SearchFieldEdit extends StatelessWidget {
         Expanded(
           child: TextField(
             onChanged: (String fieldText) => fieldText.isEmpty
-                ? searchResult.changeShowResultContainer(false)
+                ? searchResult.changeShowResults(false)
                 : {
                     searchResult.fetchData(
                         '${domainUrl}search/song?q=${fieldText.trim()}'),
-                    searchResult.changeShowResultContainer(true)
+                    searchResult.changeShowResults(true)
                   },
             onSubmitted: (String fieldText) => fieldText.isEmpty
-                ? searchResult.changeShowResultContainer(false)
+                ? searchResult.changeShowResults(false)
                 : {
                     searchResult.fetchData(
                         '${domainUrl}search/song?q=${fieldText.trim()}'),
-                    searchResult.changeShowResultContainer(true)
+                    searchResult.changeShowResults(true)
                   },
             controller: searchFieldInputController,
             autofocus: false,

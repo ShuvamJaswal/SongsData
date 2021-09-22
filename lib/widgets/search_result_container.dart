@@ -18,7 +18,7 @@ class _SearchResultContainerState extends State<SearchResultContainer> {
         padding: const EdgeInsets.all(16.0),
         child: searchResults.isFetching
             ? Center(child: CircularProgressIndicator())
-            : searchResults.shouldShowResultContainer
+            : searchResults.shouldShowResults
                 ? searchResults.getResponseJson().length == 0
                     ? Text("Nothing Found")
                     : SingleChildScrollView(

@@ -24,11 +24,11 @@ class SearchResultProvider with ChangeNotifier {
   }
 
   String get getResponseText => _searchResultJsonResonse;
-  bool get shouldShowResultContainer {
+  bool get shouldShowResults {
     return showResultContainer;
   }
 
-  void changeShowResultContainer(bool choice) {
+  void changeShowResults(bool choice) {
     choice ? showResultContainer = true : showResultContainer = false;
     notifyListeners();
   }
