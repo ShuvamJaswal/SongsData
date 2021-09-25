@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import '../providers/search_result_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -38,10 +40,29 @@ class _SearchResultContainerState extends State<SearchResultContainer> {
                                                   ['result']['id'])));
                                 },
                                 leading: CircleAvatar(
-                                  backgroundImage: NetworkImage(searchResults
-                                          .getResponseJson()[index]['result']
-                                      ['song_art_image_thumbnail_url']),
+                                  child: CachedNetworkImage(
+                                    imageUrl: searchResults
+                                            .getResponseJson()[index]['result']
+                                        ['song_art_image_thumbnail_url'],
+                                    placeholder: (context, url) => Center(
+                                      child: Icon(
+                                        MdiIcons.musicNoteOutline,
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Center(
+                                      child: Icon(
+                                        MdiIcons.musicNoteOutline,
+                                      ),
+                                    ),
+                                  ),
                                 ),
+                                //  CircleAvatar(
+                                //   backgroundImage: NetworkImage(searchResults
+                                //           .getResponseJson()[index]['result']
+                                //       ['song_art_image_thumbnail_url']),
+                                // )
+
                                 title: Text(
                                   searchResults.getResponseJson()[index]
                                       ['result']['full_title'],

@@ -60,7 +60,7 @@ class SongDataModel {
   });
 
   factory SongDataModel.fromJson(Map json) {
-    List media = json['response']?['song']['media'];
+    // List media = json['response']?['song']['media'];
     return SongDataModel(
       //problem with spotify url becuase of media lenth
       id: json['response']['song']['id'].toString(),
@@ -73,7 +73,7 @@ class SongDataModel {
           json['response']?['song']?['primary_artist']?['name'] ?? 'unknown',
 
       // json['response']?['song']?['album']?['artist']?['name']?.toString() ??     "unknown",
-      imageUrl: json['response']?['song']?['custom_song_art_image_url'],
+      imageUrl: json['response']?['song']?['song_art_image_url'],
       releaseDate:
           json['response']?['song']?['release_date_for_display'] ?? 'unknown',
 

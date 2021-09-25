@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
@@ -47,23 +48,7 @@ class _SongDataState extends State<SongData> {
       print('image ${songData.imageUrl}');
       setState(() {
         _isLoading = false;
-      }); //.then((_) {
-      //   setState(() {
-      //     _isLoading = false;
-      //   });
-      // });
-//aSYNC CALL
-//
-//
-
-      //genius.com/api/search/song?q=${fieldText.trim()
-      // Future.delayed(
-      //   Duration(seconds: 2),
-      // ).then((_) {
-      //   setState(() {
-      //     _isLoading = false;
-      //   });
-      // });
+      });
       _isInit = false;
       super.didChangeDependencies();
     }
@@ -79,97 +64,105 @@ class _SongDataState extends State<SongData> {
             ? Center(
                 child: CircularProgressIndicator(),
               )
-            : Center(
+            : SingleChildScrollView(
+                padding: EdgeInsets.only(top: 50),
                 child: Column(children: [
-                Column(
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Card(
-                        elevation: 10,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        clipBehavior: Clip.antiAlias,
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.width * 0.85,
-                          width: MediaQuery.of(context).size.width * 0.85,
-                          child: Stack(
-                            children: [
-                              Image(
-                                image: NetworkImage(songData.imageUrl),
-                                fit: BoxFit.cover,
-                                height:
-                                    MediaQuery.of(context).size.width * 0.85,
-                              ),
-                            ],
-                          ),
+                  Card(
+                    elevation: 10,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)),
+                    clipBehavior: Clip.antiAlias,
+                    child: CachedNetworkImage(
+                      fit: BoxFit.cover,
+                      height: MediaQuery.of(context).size.width * 0.85,
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      imageUrl: songData.imageUrl,
+                      placeholder: (context, url) => Center(
+                        child: Icon(
+                          MdiIcons.musicNoteOutline,
+                          size: MediaQuery.of(context).size.width * 0.50,
                         ),
                       ),
-                    ]),
-                Column(children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(35, 5, 35, 0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        /// Title container
-                        Text(
-                          "Title: ${songData.title}",
-                          textAlign: TextAlign.left,
-                          //overflow: TextOverflow.,
-                          maxLines: 1,
-                          style: TextStyle(
-                            fontSize: 35,
-                            fontWeight: FontWeight.bold,
-                            // color: Theme.of(context).accentColor
-                          ),
+                      errorWidget: (context, url, error) => Center(
+                        child: Icon(
+                          MdiIcons.musicNoteOutline,
+                          size: MediaQuery.of(context).size.width * 0.50,
                         ),
-                        Text(
-                          "Artist: ${songData.artist}",
-                          textAlign: TextAlign.left,
-                          //overflow: TextOverflow.,
-                          //maxLines: 1,
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.secondary),
-                        ),
-                        Text("Release Date: ${songData.releaseDate}"),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            if (songData.youTubeUrl != null)
-                              IconButton(
-                                icon: Icon(
-                                  MdiIcons.youtube,
-                                  size: 40,
-                                  color: Colors.red,
-                                ),
-                                onPressed: () => launch(songData.youTubeUrl),
-                              ),
-                            if (songData.spotifyUrl != null)
-                              IconButton(
-                                icon: Icon(
-                                  MdiIcons.spotify,
-                                  size: 40,
-                                  color: Colors.green,
-                                ),
-                                onPressed: () => launch(songData.spotifyUrl),
-                              ),
-                            if (songData.soundCloudUrl != null)
-                              IconButton(
-                                icon: Icon(
-                                  MdiIcons.soundcloud,
-                                  size: 40,
-                                  color: Colors.orange,
-                                ),
-                                onPressed: () => launch(songData.soundCloudUrl),
-                              ),
-                          ],
-                        )
-                      ],
+                      ),
                     ),
-                  )
-                ])
-              ])));
+                    // Image(
+                    //   image: NetworkImage(songData.imageUrl),
+                    //   fit: BoxFit.cover,
+                    //   height: MediaQuery.of(context).size.width * 0.85,
+                    // ),
+                  ),
+                  Column(children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(35, 5, 35, 0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          /// Title container
+                          Text(
+                            "Title: ${songData.title}",
+                            textAlign: TextAlign.left,
+                            //overflow: TextOverflow.,
+                            maxLines: 1,
+                            style: TextStyle(
+                              fontSize: 35,
+                              fontWeight: FontWeight.bold,
+                              // color: Theme.of(context).accentColor
+                            ),
+                          ),
+                          Text(
+                            "Artist: ${songData.artist}",
+                            textAlign: TextAlign.left,
+                            //overflow: TextOverflow.,
+                            //maxLines: 1,
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.secondary),
+                          ),
+                          Text("Release Date: ${songData.releaseDate}"),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              if (songData.youTubeUrl != null)
+                                IconButton(
+                                  icon: Icon(
+                                    MdiIcons.youtube,
+                                    size: 40,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () => launch(songData.youTubeUrl),
+                                ),
+                              if (songData.spotifyUrl != null)
+                                IconButton(
+                                  icon: Icon(
+                                    MdiIcons.spotify,
+                                    size: 40,
+                                    color: Colors.green,
+                                  ),
+                                  onPressed: () => launch(songData.spotifyUrl),
+                                ),
+                              if (songData.soundCloudUrl != null)
+                                IconButton(
+                                  icon: Icon(
+                                    MdiIcons.soundcloud,
+                                    size: 40,
+                                    color: Colors.orange,
+                                  ),
+                                  onPressed: () =>
+                                      launch(songData.soundCloudUrl),
+                                ),
+                            ],
+                          )
+                        ],
+                      ),
+                    )
+                  ])
+                ]),
+              ));
   }
 }
