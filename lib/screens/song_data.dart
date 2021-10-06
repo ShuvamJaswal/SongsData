@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:song_app/helpers/sond_data_model.dart';
 import 'package:song_app/providers/song_data_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -32,20 +29,9 @@ class _SongDataState extends State<SongData> {
         _isLoading = true;
       });
       final songDataProvider = Provider.of<SongDataProvider>(context);
-      // Provider.of<SongDataProvider>(context)
-      print("fetch data");
       await songDataProvider
           .fetchData("https://genius.com/api/songs/${widget.songId}");
-      print("fetched data");
       songData = songDataProvider.getSongDataModel;
-      // songData =
-      //     SongDataModel.fromJson(jsonDecode(songDataProvider.getResponseText));
-
-      print('SongID ${songData.id}');
-      print('title ${songData.title}');
-      print('album ${songData.album}');
-      print('artist ${songData.artist}');
-      print('image ${songData.imageUrl}');
       setState(() {
         _isLoading = false;
       });
@@ -56,113 +42,123 @@ class _SongDataState extends State<SongData> {
 
   @override
   Widget build(BuildContext context) {
+    final songDataProvider = Provider.of<SongDataProvider>(
+        context); //initialized again so thet it can be used in this scope the provider in isinit wont work because of different context ig.
     return Scaffold(
         appBar: AppBar(
           title: Text("Data"),
         ),
-        body: _isLoading
-            ? Center(
-                child: CircularProgressIndicator(),
+        body: songDataProvider.somethingIsntGood
+            ? AlertDialog(
+                title: Text("Something Went Wrong."),
               )
-            : SingleChildScrollView(
-                padding: EdgeInsets.only(top: 50),
-                child: Column(children: [
-                  Card(
-                    elevation: 10,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    clipBehavior: Clip.antiAlias,
-                    child: CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      height: MediaQuery.of(context).size.width * 0.85,
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      imageUrl: songData.imageUrl,
-                      placeholder: (context, url) => Center(
-                        child: Icon(
-                          MdiIcons.musicNoteOutline,
-                          size: MediaQuery.of(context).size.width * 0.50,
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Center(
-                        child: Icon(
-                          MdiIcons.musicNoteOutline,
-                          size: MediaQuery.of(context).size.width * 0.50,
-                        ),
-                      ),
-                    ),
-                    // Image(
-                    //   image: NetworkImage(songData.imageUrl),
-                    //   fit: BoxFit.cover,
-                    //   height: MediaQuery.of(context).size.width * 0.85,
-                    // ),
-                  ),
-                  Column(children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(35, 5, 35, 0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          /// Title container
-                          Text(
-                            "Title: ${songData.title}",
-                            textAlign: TextAlign.left,
-                            //overflow: TextOverflow.,
-                            maxLines: 1,
-                            style: TextStyle(
-                              fontSize: 35,
-                              fontWeight: FontWeight.bold,
-                              // color: Theme.of(context).accentColor
+            : _isLoading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : SingleChildScrollView(
+                    padding: EdgeInsets.only(top: 50),
+                    child: Column(
+                      children: [
+                        Card(
+                          elevation: 10,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          clipBehavior: Clip.antiAlias,
+                          child: CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            height: MediaQuery.of(context).size.width * 0.85,
+                            width: MediaQuery.of(context).size.width * 0.85,
+                            imageUrl: songData.imageUrl,
+                            placeholder: (context, url) => Center(
+                              child: Icon(
+                                MdiIcons.musicNoteOutline,
+                                size: MediaQuery.of(context).size.width * 0.50,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Center(
+                              child: Icon(
+                                MdiIcons.musicNoteOutline,
+                                size: MediaQuery.of(context).size.width * 0.50,
+                              ),
                             ),
                           ),
-                          Text(
-                            "Artist: ${songData.artist}",
-                            textAlign: TextAlign.left,
-                            //overflow: TextOverflow.,
-                            //maxLines: 1,
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.secondary),
-                          ),
-                          Text("Release Date: ${songData.releaseDate}"),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              if (songData.youTubeUrl != null)
-                                IconButton(
-                                  icon: Icon(
-                                    MdiIcons.youtube,
-                                    size: 40,
-                                    color: Colors.red,
+                        ),
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(35, 5, 35, 0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  /// Title container
+                                  Text(
+                                    "Title: ${songData.title}",
+                                    textAlign: TextAlign.left,
+                                    //overflow: TextOverflow.,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontSize: 35,
+                                      fontWeight: FontWeight.bold,
+                                      // color: Theme.of(context).accentColor
+                                    ),
                                   ),
-                                  onPressed: () => launch(songData.youTubeUrl),
-                                ),
-                              if (songData.spotifyUrl != null)
-                                IconButton(
-                                  icon: Icon(
-                                    MdiIcons.spotify,
-                                    size: 40,
-                                    color: Colors.green,
+                                  Text(
+                                    "Artist: ${songData.artist}",
+                                    textAlign: TextAlign.left,
+                                    //overflow: TextOverflow.,
+                                    //maxLines: 1,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary),
                                   ),
-                                  onPressed: () => launch(songData.spotifyUrl),
-                                ),
-                              if (songData.soundCloudUrl != null)
-                                IconButton(
-                                  icon: Icon(
-                                    MdiIcons.soundcloud,
-                                    size: 40,
-                                    color: Colors.orange,
-                                  ),
-                                  onPressed: () =>
-                                      launch(songData.soundCloudUrl),
-                                ),
-                            ],
-                          )
-                        ],
-                      ),
-                    )
-                  ])
-                ]),
-              ));
+                                  Text("Release Date: ${songData.releaseDate}"),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      if (songData.youTubeUrl != null)
+                                        IconButton(
+                                          icon: Icon(
+                                            MdiIcons.youtube,
+                                            size: 40,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () =>
+                                              launch(songData.youTubeUrl),
+                                        ),
+                                      if (songData.spotifyUrl != null)
+                                        IconButton(
+                                          icon: Icon(
+                                            MdiIcons.spotify,
+                                            size: 40,
+                                            color: Colors.green,
+                                          ),
+                                          onPressed: () =>
+                                              launch(songData.spotifyUrl),
+                                        ),
+                                      if (songData.soundCloudUrl != null)
+                                        IconButton(
+                                          icon: Icon(
+                                            MdiIcons.soundcloud,
+                                            size: 40,
+                                            color: Colors.orange,
+                                          ),
+                                          onPressed: () =>
+                                              launch(songData.soundCloudUrl),
+                                        ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ));
   }
 }

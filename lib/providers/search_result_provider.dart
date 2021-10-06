@@ -1,53 +1,56 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:song_app/helpers/sond_data_model.dart';
 
 class SearchResultProvider with ChangeNotifier {
-  String _displayText = "";
-  String _searchResultJsonResonse = "";
-  bool _isFetchingSearchResults = false;
-  bool showResultContainer = false;
-  bool get isFetching => _isFetchingSearchResults;
+  bool _somethingIsntGood =
+      false; //to store if there is some problem in data processing.
+  String _searchResultJsonResonse = ""; //save search response
+  bool _isFetchingSearchResults = false; //see if request completed or not
+  bool showResultContainer = false; //should show the search results or not
 
   Future<void> fetchData(String searchUrl) async {
-    _isFetchingSearchResults = true;
+    _somethingIsntGood = false; //reset variable value.
+    _isFetchingSearchResults =
+        true; //check if request is running or not, used for showling loading indicator.
     notifyListeners();
-
-    var response = await http.get(Uri.parse(searchUrl));
-    if (response.statusCode == 200) {
-      _searchResultJsonResonse = response.body;
+    try {
+      var response = await http.get(Uri.parse(searchUrl));
+      if (response.statusCode == 200) {
+        _searchResultJsonResonse = response.body;
+      }
+    } catch (error) {
+      _somethingIsntGood = true; //to show error dialog.
+      notifyListeners();
     }
-    print(response.statusCode);
     _isFetchingSearchResults = false;
     notifyListeners();
   }
 
+  void changeShowResults(bool choice) {
+    showResultContainer = choice;
+    notifyListeners();
+  }
+
+  List<dynamic> getResponseJson() {
+    try {
+      _somethingIsntGood = false;
+      if (_searchResultJsonResonse.isNotEmpty) {
+        Map<String, dynamic> json = jsonDecode(_searchResultJsonResonse);
+        return json['response']['sections'][0]['hits'];
+      }
+    } catch (error) {
+      _somethingIsntGood = true;
+    }
+    return [];
+  }
+
+//getters.
+  bool get isFetching => _isFetchingSearchResults;
   String get getResponseText => _searchResultJsonResonse;
   bool get shouldShowResults {
     return showResultContainer;
   }
 
-  void changeShowResults(bool choice) {
-    choice ? showResultContainer = true : showResultContainer = false;
-    notifyListeners();
-  }
-
-  void setDisplayText(String text) {
-    _displayText = text;
-    notifyListeners();
-  }
-
-  String get getDisplayText => _displayText;
-
-  List<dynamic> getResponseJson() {
-    if (_searchResultJsonResonse.isNotEmpty) {
-      // print(_searchResultJsonResonse);
-      Map<String, dynamic> json = jsonDecode(_searchResultJsonResonse);
-      print(json['response']['sections'][0]['hits']);
-      // print(json['data']['avatar']);
-      return json['response']['sections'][0]['hits'];
-    }
-    return [];
-  }
+  bool get somethingIsntGood => _somethingIsntGood;
 }

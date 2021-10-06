@@ -49,18 +49,9 @@ class SongDataModel {
     this.soundCloudUrl,
     this.spotifyUrl,
     this.youTubeUrl,
-    // this.genre,
-    // this.duration,
-    // this.artUri,
-    // this.playable = true,
-    // this.displayTitle,
-    // this.displaySubtitle,
-    //   this.displayDescription,
-//    this.rating,
   });
 
   factory SongDataModel.fromJson(Map json) {
-    // List media = json['response']?['song']['media'];
     return SongDataModel(
       //problem with spotify url becuase of media lenth
       id: json['response']['song']['id'].toString(),

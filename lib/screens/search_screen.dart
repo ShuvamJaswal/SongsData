@@ -32,7 +32,6 @@ class _SearchScreenState extends State<SearchScreen> {
 }
 
 class SearchFieldEdit extends StatelessWidget {
-  final searchFieldInputController = TextEditingController();
   final String domainUrl = 'https://genius.com/api/';
   @override
   Widget build(BuildContext context) {
@@ -42,7 +41,8 @@ class SearchFieldEdit extends StatelessWidget {
         Expanded(
           child: TextField(
             onChanged: (String fieldText) => fieldText.isEmpty
-                ? searchResult.changeShowResults(false)
+                ? searchResult.changeShowResults(
+                    false) //gi==hide search container if nothing searched.
                 : {
                     searchResult.fetchData(
                         '${domainUrl}search/song?q=${fieldText.trim()}'),
@@ -55,7 +55,6 @@ class SearchFieldEdit extends StatelessWidget {
                         '${domainUrl}search/song?q=${fieldText.trim()}'),
                     searchResult.changeShowResults(true)
                   },
-            controller: searchFieldInputController,
             autofocus: false,
             decoration: InputDecoration(
               border: OutlineInputBorder(

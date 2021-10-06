@@ -4,17 +4,23 @@ import 'package:http/http.dart' as http;
 import 'package:song_app/helpers/sond_data_model.dart';
 
 class SongDataProvider with ChangeNotifier {
-  String _searchResultJsonResonse = "";
-
+  String _songDataJsonResonse = "";
+  bool _somethingIsntGood =
+      false; //to store if there is some problem in data processing.
   Future<void> fetchData(String songUrl) async {
-    print(songUrl);
-    var response = await http.get(Uri.parse(songUrl));
-    if (response.statusCode == 200) {
-      _searchResultJsonResonse = response.body;
+    _somethingIsntGood = false;
+    try {
+      var response = await http.get(Uri.parse(songUrl));
+      if (response.statusCode == 200) {
+        _songDataJsonResonse = response.body;
+      }
+    } catch (error) {
+      _somethingIsntGood = true; //to show error dialog.
+      notifyListeners();
     }
-    //print(response.statusCode);
   }
 
   SongDataModel get getSongDataModel =>
-      SongDataModel.fromJson(jsonDecode(_searchResultJsonResonse));
+      SongDataModel.fromJson(jsonDecode(_songDataJsonResonse));
+  bool get somethingIsntGood => _somethingIsntGood;
 }
