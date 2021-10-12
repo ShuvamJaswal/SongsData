@@ -1,4 +1,6 @@
 class SongDataModel {
+  final String? lyricsURL;
+
   /// A unique songId.
   final String id;
   final String? spotifyUrl;
@@ -20,6 +22,7 @@ class SongDataModel {
     required this.album,
     required this.title,
     this.artist,
+    this.lyricsURL,
     this.imageUrl,
     this.releaseDate,
     this.soundCloudUrl,
@@ -29,6 +32,7 @@ class SongDataModel {
 
   factory SongDataModel.fromJson(Map json) {
     return SongDataModel(
+      lyricsURL: json['response']?['song']['url'],
       id: json['response']['song']['id'].toString(),
       album: json['response']?['song']?['album']?['full_title'] ?? "Unknown",
       title: json['response']?['song']?['title'] ?? 'unknown',
